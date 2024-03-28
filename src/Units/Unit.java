@@ -5,7 +5,6 @@ import java.lang.Math;
 
 public class Unit {
     protected float defaultMovement = 0;
-    protected float evasion = 0;
     protected int finePlain = 1;
     protected float fineTree = 1F;
     protected float fineSwamp = 1f;
@@ -94,17 +93,11 @@ public class Unit {
     }
     public void attack(Unit target)
     {
-        if(target.evasion > Math.random())
-        {
-            System.out.println(target.name + " dodged the attack with evasion " + target.evasion);
-        }
-        else {
-            if (target.defence > this.damage) {
-                target.defence -= this.damage;
-            } else {
-                target.hp += target.defence - this.damage;
-                target.defence = 0;
-            }
+        if (target.defence > this.damage) {
+            target.defence -= this.damage;
+        } else {
+            target.hp += target.defence - this.damage;
+            target.defence = 0;
         }
     }
     public float fine(String ter)
