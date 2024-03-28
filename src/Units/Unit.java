@@ -4,7 +4,6 @@ import Logic.Field;
 import java.lang.Math;
 
 public class Unit {
-    protected float defaultMovement = 0;
     protected float evasion = 0;
     protected int finePlain = 1;
     protected float fineTree = 1F;
@@ -18,6 +17,7 @@ public class Unit {
     protected int distance;
     protected int defence;
     protected float movement;
+    protected float defaultMovement;
     protected int price;
     protected boolean seeEn = false;
     protected int xcord;
@@ -129,9 +129,12 @@ public class Unit {
     public void setMovement(float mov) {
         this.movement = mov;
     }
-    public void setSign(String sg)
-    {
+    public void setSign(String sg) {
         this.sign = sg;
+    }
+    public void setEvasion(float evas)
+    {
+        this.evasion = evas;
     }
     public void seeEnemy(Unit enemy)
     {
