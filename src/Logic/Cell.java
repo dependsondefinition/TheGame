@@ -1,6 +1,7 @@
 package Logic;
 
 import Units.Unit;
+import Chest.Chest;
 
 public class Cell {
     private String typeOfTerrain = "";

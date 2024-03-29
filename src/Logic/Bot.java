@@ -56,9 +56,20 @@ public class Bot {
             hiddenLogic.toDefault(botUnits);
         }
         Unit thisBot = botUnits.get(botCount);
-        target = setTarget(thisBot, hiddenLogic.retUs());
-        thisBot.seeEnemy(target);
-        if (thisBot.isSeeEn()) {
+        if(hiddenLogic.chest.isOnField() && !hiddenLogic.chest.isOpen())
+        {
+            target = hiddenLogic.chest;
+        }
+        else {
+            target = setTarget(thisBot, hiddenLogic.retUs());
+            thisBot.seeEnemy(target);
+        }
+        if(hiddenLogic.chest.canBeOpen(thisBot))
+        {
+            hiddenLogic.chest.openChest(thisBot);
+            hiddenLogic.fld.getMap().get(hiddenLogic.chest.getX()).get(hiddenLogic.chest.getY()).releaseUn();
+        }
+        else if (thisBot.isSeeEn()) {
             thisBot.attack(target);
             System.out.println("Bot " + thisBot.getName() + " attacked your unit " + target.getName());
             System.out.println(target.getName() + "'s HP: " + target.getHp());
@@ -91,7 +102,7 @@ public class Bot {
         int dir = 0;
         if(target.getX() > bot.getX())
         {
-            if(target.getY() > bot.getY())
+            if(target.getY() > bot.getY()) // if target is right+down
             {
                 if(hiddenLogic.checkDir(1, 1, bot))
                 {
@@ -106,7 +117,7 @@ public class Bot {
                     dir = 3;
                 }
             }
-            else if(target.getY() < bot.getY())
+            else if(target.getY() < bot.getY()) //if target is left+down
             {
                 if(hiddenLogic.checkDir(1, -1, bot))
                 {
@@ -121,14 +132,36 @@ public class Bot {
                     dir = 3;
                 }
             }
-            else if(hiddenLogic.checkDir(1, 0, bot))
+            else //if target is down
             {
-                dir = 3;
+                if(hiddenLogic.checkDir(1, 0, bot)) {
+                    dir = 3;
+                }
+                else if(bot.getY() < hiddenLogic.fld.getYsize() - 1)
+                {
+                    if(hiddenLogic.checkDir(1, 1, bot)) {
+                        dir = 7;
+                    }
+                    else if(hiddenLogic.checkDir(0, 1, bot))
+                    {
+                        dir = 2;
+                    }
+                }
+                else if(bot.getY() > 0)
+                {
+                    if(hiddenLogic.checkDir(1, -1, bot)) {
+                        dir = 8;
+                    }
+                    else if(hiddenLogic.checkDir(0, -1, bot))
+                    {
+                        dir = 4;
+                    }
+                }
             }
         }
         else if(target.getX() < bot.getX())
         {
-            if(target.getY() > bot.getY())
+            if(target.getY() > bot.getY()) // if target is right+up
             {
                 if(hiddenLogic.checkDir(-1, 1, bot))
                 {
@@ -143,7 +176,7 @@ public class Bot {
                     dir = 1;
                 }
             }
-            else if(target.getY() < bot.getY())
+            else if(target.getY() < bot.getY()) // if target is left+up
             {
                 if(hiddenLogic.checkDir(-1, -1, bot))
                 {
@@ -158,14 +191,36 @@ public class Bot {
                     dir = 1;
                 }
             }
-            else if(hiddenLogic.checkDir(-1, 0, bot))
+            else  // if target is up
             {
-                dir = 1;
+                if(hiddenLogic.checkDir(-1, 0, bot)) {
+                    dir = 1;
+                }
+                else if(bot.getY() < hiddenLogic.fld.getYsize() - 1)
+                {
+                    if(hiddenLogic.checkDir(-1, 1, bot)) {
+                        dir = 5;
+                    }
+                    else if(hiddenLogic.checkDir(0, 1, bot))
+                    {
+                        dir = 2;
+                    }
+                }
+                else if(bot.getY() > 0)
+                {
+                    if(hiddenLogic.checkDir(-1, -1, bot)) {
+                        dir = 6;
+                    }
+                    else if(hiddenLogic.checkDir(0, -1, bot))
+                    {
+                        dir = 4;
+                    }
+                }
             }
         }
         else
         {
-            if(target.getY() > bot.getY())
+            if(target.getY() > bot.getY()) // if target is right
             {
                 if(hiddenLogic.checkDir(0, 1, bot))
                 {
@@ -194,7 +249,7 @@ public class Bot {
                     }
                 }
             }
-            else if(target.getY() < bot.getY())
+            else if(target.getY() < bot.getY()) // if target is left
             {
                 if(hiddenLogic.checkDir(0, -1, bot))
                 {
