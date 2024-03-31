@@ -68,6 +68,7 @@ public class Bot {
         {
             hiddenLogic.chest.openChest(thisBot);
             hiddenLogic.fld.getMap().get(hiddenLogic.chest.getX()).get(hiddenLogic.chest.getY()).releaseUn();
+            target = null;
         }
         else if (thisBot.isSeeEn()) {
             thisBot.attack(target);
