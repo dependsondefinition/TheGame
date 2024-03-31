@@ -1,6 +1,7 @@
 package Logic;
 
 import Units.*;
+import Chest.Chest;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class Logic {
     private boolean canSpawn = true;
     private final Scanner scan = new Scanner(System.in);
     Field fld;
+    Chest chest = new Chest();
     private int count = 0;
     private Unit enemy;
     private final List<Unit> unitTable = List.of(new Swordsman(), new Spearman(), new Axeman(), new LongBow(), new ShortBow(),
@@ -61,10 +63,13 @@ public class Logic {
         }
         Unit thisUnit = userUnits.get(count);
         checkEnemy(thisUnit, hiddenBot.getBotUnits());
+        if(Math.random() > 0.5 && !chest.isOnField())
+        {
+            spawnChest();
+        }
         choice(count);
         int dec = scan.nextInt();
         if (dec == 3 || thisUnit.getMovement() < 1f && !thisUnit.isSeeEn()) {
-            setUnits(userUnits);
             count++;
         } else if (dec == 1 && userUnits.get(count).getMovement() >= 1f) {
             fld.getMap().get(thisUnit.getX()).get(thisUnit.getY()).releaseUn();
@@ -83,15 +88,16 @@ public class Logic {
                 enemy = null;
             }
             count++;
+        } else if(dec == 4 && chest.canBeOpen(thisUnit)){
+            chest.openChest(thisUnit);
+            fld.getMap().get(chest.getX()).get(chest.getY()).releaseUn();
         }
     }
     private void checkEnemy(Unit user, ArrayList <Unit> enemies)
     {
-        for(int i = 0; i < enemies.size(); i++)
-        {
-            user.seeEnemy(enemies.get(i));
-            if(user.isSeeEn())
-            {
+        for (Unit unit : enemies) {
+            user.seeEnemy(unit);
+            if (user.isSeeEn()) {
                 break;
             }
         }
@@ -114,13 +120,23 @@ public class Logic {
     }
     void toDefault(ArrayList <Unit> units)
     {
-        for(int i = 0; i < units.size(); i++)
-        {
-            if(units.get(i).getMovement() < units.get(i).getDefaultMovement())
-            {
-                units.get(i).setMovement(units.get(i).getDefaultMovement());
+        for (Unit unit : units) {
+            if (unit.getMovement() < unit.getDefaultMovement()) {
+                unit.setMovement(unit.getDefaultMovement());
             }
         }
+    }
+    private void spawnChest()
+    {
+        int x = (int) (Math.random() * (fld.getXsize() - 2) + 1),y = (int) (Math.random() * (fld.getYsize() - 2) + 1);
+        while(!fld.getMap().get(x).get(y).isPlain())
+        {
+            x = (int) (Math.random() * (fld.getXsize() - 2) + 1);
+            y = (int) (Math.random() * (fld.getYsize() - 2) + 1);
+        }
+        chest.setCoord(x, y);
+        fld.getMap().get(x).get(y).setUn(chest);
+        chest.setOnField(true);
     }
     private void spawnUnit(int num)
     {
@@ -167,17 +183,22 @@ public class Logic {
     }
     private void choice(int num)
     {
-        System.out.println(userUnits.get(num));
+        Unit unit = userUnits.get(num);
+        System.out.println(unit);
         System.out.println("Choose action from list:");
-        if(userUnits.get(num).getMovement() >= 1f)
+        if(unit.getMovement() >= 1f)
         {
             System.out.println("1. Move this unit");
         }
-        if(userUnits.get(num).isSeeEn())
+        if(unit.isSeeEn())
         {
             System.out.println("2. Attack enemy");
         }
         System.out.println("3. Skip this unit (idle)");
+        if(chest.canBeOpen(unit) && chest.isOnField())
+        {
+            System.out.println("4. Get upgrade");
+        }
     }
     private void chDir(Unit un)
     {
@@ -253,12 +274,11 @@ public class Logic {
     public boolean isContSpawn() { return canSpawn;}
     public void setUnits(ArrayList<Unit> units)
     {
-        for(int i = 0; i < units.size(); i++)
-        {
-            fld.getMap().get(units.get(i).getX()).get(units.get(i).getY()).setUn(units.get(i));
-            while (!fld.getMap().get(units.get(i).getX()).get(units.get(i).getY()).isOccupied()) {
-                units.get(i).move(this.fld);
-                fld.getMap().get(units.get(i).getX()).get(units.get(i).getY()).setUn(units.get(i));
+        for (Unit unit : units) {
+            fld.getMap().get(unit.getX()).get(unit.getY()).setUn(unit);
+            while (!fld.getMap().get(unit.getX()).get(unit.getY()).isOccupied()) {
+                unit.move(this.fld);
+                fld.getMap().get(unit.getX()).get(unit.getY()).setUn(unit);
             }
         }
     }

@@ -23,7 +23,7 @@ public class Field {
         for(int i = 0; i < xsize; i++)
         {
             int lim = 3;
-            terrain = (int) (Math.random() * 4) + 1;
+            terrain = (int) (Math.random() * (typeOfObstacle.length - 1)) + 1;
             Map.add(i, new ArrayList<Cell>());
             for(int j = 0; j < ysize; j++)
             {

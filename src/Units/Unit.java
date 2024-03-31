@@ -4,37 +4,42 @@ import Logic.Field;
 import java.lang.Math;
 
 public class Unit {
-    protected float defaultMovement = 0;
-    protected int finePlain = 1;
-    protected float fineTree = 1F;
-    protected float fineSwamp = 1f;
-    protected float fineHill = 1f;
-    protected float fineMountain = 1f;
-    protected String name;
+    float evasion = 0;
+    int finePlain = 1;
+    float fineTree = 1F;
+    float fineSwamp = 1f;
+    float fineHill = 1f;
+    float fineMountain = 1f;
+    String name;
     protected String sign;
-    protected int hp;
-    protected int damage;
-    protected int distance;
-    protected int defence;
-    protected float movement;
-    protected int price;
-    protected boolean seeEn = false;
+    int hp;
+    int damage;
+    int distance;
+    int defence;
+    float movement;
+    float defaultMovement;
+    int defaultHP;
+    int price;
+    boolean seeEn = false;
     protected int xcord;
     protected int ycord;
-    protected int dir = 0;
-    protected Unit(String n, String sgn, int health, int dam, int dist, int def, float move, int pr)
+    int dir = 0;
+    Unit(String n, String sgn, int health, int dam, int dist, int def, float move, int pr)
     {
         this.name = n;
         this.sign = sgn;
         this.hp = health;
+        this.defaultHP = health;
         this.damage = dam;
         this.distance = dist;
         this.defence = def;
         this.movement = move;
+        this.defaultMovement = move;
         this.price = pr;
     }
+    protected Unit()
+    {
 
-    protected Unit() {
     }
     @Override
     public String toString()
@@ -99,6 +104,7 @@ public class Unit {
             target.hp += target.defence - this.damage;
             target.defence = 0;
         }
+        seeEn = false;
     }
     public float fine(String ter)
     {
@@ -122,21 +128,54 @@ public class Unit {
     public void setMovement(float mov) {
         this.movement = mov;
     }
-    public void setSign(String sg)
-    {
+    public void setSign(String sg) {
         this.sign = sg;
     }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+    public void setFines(float tree, float swamp, float hill, float mountain)
+    {
+        this.fineTree = tree;
+        this.fineSwamp = swamp;
+        this.fineHill = hill;
+        this.fineMountain = mountain;
+    }
+    public void setDefence(int def){
+        this.defence = def;
+    }
+
+    public void setEvasion(float evas)
+    {
+        this.evasion = evas;
+    }
+
+    public void setDefaultMovement(float defaultMovement) {
+        this.defaultMovement = defaultMovement;
+    }
+
     public void seeEnemy(Unit enemy)
     {
-        seeEn = (int) (Math.hypot(enemy.getX() - this.getX(), (enemy.getY() - this.getY()))) <= this.distance;
+        seeEn = Math.hypot(enemy.getX() - this.getX(), (enemy.getY() - this.getY())) <= this.distance;
     }
     public boolean isSeeEn() {
         return this.seeEn;
     }
     public int getHp() {return this.hp; }
+    public int getDefaultHP() {
+        return defaultHP;
+    }
+
     public float getMovement() { return this.movement;}
     public float getDefaultMovement() {return this.defaultMovement; }
     public int getDir() { return this.dir; }
+    public int getDefence(){
+        return this.defence;
+    }
+    public float getEvasion() {
+        return this.evasion;
+    }
     public String getName() { return this.name; }
     public int getX() { return this.xcord;}
     public int getY() { return this.ycord;}
