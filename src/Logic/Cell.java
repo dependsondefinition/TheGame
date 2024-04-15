@@ -1,21 +1,17 @@
 package Logic;
 
 import Units.Unit;
-import Chest.Chest;
 
-public class Cell {
+import java.io.Serializable;
+
+public class Cell implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String typeOfTerrain = "";
     private boolean occupied = false;
-    private Unit un;
-    public Cell(String input)
-    {
-        this.typeOfTerrain = input;
-    }
     public void setUn(Unit unit)
     {
         if(this.isPlain())
         {
-            this.un = unit;
             this.typeOfTerrain = unit.getSign();
             this.occupied = true;
         }
@@ -24,7 +20,6 @@ public class Cell {
     {
         this.typeOfTerrain = "*";
         this.occupied = false;
-        this.un = null;
     }
     public String getTer()
     {

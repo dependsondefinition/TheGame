@@ -1,16 +1,13 @@
 package Units;
 
 import Logic.Field;
+
 import java.lang.Math;
 
 public class Unit {
     float evasion = 0;
-    int finePlain = 1;
-    float fineTree = 1F;
-    float fineSwamp = 1f;
-    float fineHill = 1f;
-    float fineMountain = 1f;
     String name;
+    int fineNumber = 0;
     protected String sign;
     int hp;
     int damage;
@@ -70,30 +67,35 @@ public class Unit {
             case 5: {
                 this.xcord--;
                 this.ycord++;
-                fineDiag = Math.min(fine(fld.getMap().get(getX() + 1).get(getY()).getTer()), fine(fld.getMap().get(getX()).get(getY() - 1).getTer()));
+                fineDiag = Math.min(fld.fine(fld.getMap().get(getX() + 1).get(getY()).getTer(), fineNumber),
+                        fld.fine(fld.getMap().get(getX()).get(getY() - 1).getTer(), fineNumber));
                 break;
             }
             case 6: {
                 this.xcord--;
                 this.ycord--;
-                fineDiag = Math.min(fine(fld.getMap().get(getX() + 1).get(getY()).getTer()), fine(fld.getMap().get(getX()).get(getY() + 1).getTer()));
+                fineDiag = Math.min(fld.fine(fld.getMap().get(getX() + 1).get(getY()).getTer(), fineNumber),
+                        fld.fine(fld.getMap().get(getX()).get(getY() + 1).getTer(), fineNumber));
                 break;
             }
             case 7: {
                 this.xcord++;
                 this.ycord++;
-                fineDiag = Math.min(fine(fld.getMap().get(getX() - 1).get(getY()).getTer()), fine(fld.getMap().get(getX()).get(getY() - 1).getTer()));
+                fineDiag = Math.min(fld.fine(fld.getMap().get(getX() - 1).get(getY()).getTer(), fineNumber),
+                        fld.fine(fld.getMap().get(getX()).get(getY() - 1).getTer(), fineNumber));
                 break;
             }
             case 8: {
                 this.xcord++;
                 this.ycord--;
-                fineDiag = Math.min(fine(fld.getMap().get(getX() - 1).get(getY()).getTer()), fine(fld.getMap().get(getX()).get(getY() + 1).getTer()));
+                fineDiag = Math.min(fld.fine(fld.getMap().get(getX() - 1).get(getY()).getTer(), fineNumber),
+                        fld.fine(fld.getMap().get(getX()).get(getY() + 1).getTer(), fineNumber));
+
                 break;
             }
             default: System.out.println("Wrong input"); break;
         }
-        fine = fine(fld.getMap().get(getX()).get(getY()).getTer());
+        fine = fld.fine(fld.getMap().get(getX()).get(getY()).getTer(), fineNumber);
         this.movement -= fine + fineDiag;
     }
     public void attack(Unit target)
@@ -112,15 +114,16 @@ public class Unit {
         }
         seeEn = false;
     }
-    public float fine(String ter)
+    public int getFineNumber()
     {
-        return switch (ter) {
-            case ("!") -> this.fineTree;
-            case ("#") -> this.fineSwamp;
-            case ("@") -> this.fineHill;
-            case ("^") -> this.fineMountain;
-            default -> this.finePlain; // returns when terrain is plain (*) or cell is occupied (terrain is still plain)
-        };
+        return fineNumber;
+    }
+    public void setFineNumber(int x)
+    {
+        if(x >= 0 && x <= 2)
+        {
+            fineNumber = x;
+        }
     }
     public void setCoord(int x, int y)
     {
@@ -140,13 +143,6 @@ public class Unit {
 
     public void setHp(int hp) {
         this.hp = hp;
-    }
-    public void setFines(float tree, float swamp, float hill, float mountain)
-    {
-        this.fineTree = tree;
-        this.fineSwamp = swamp;
-        this.fineHill = hill;
-        this.fineMountain = mountain;
     }
     public void setDefence(int def){
         this.defence = def;

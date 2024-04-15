@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Logic {
     private int budget = 75;
     private boolean canSpawn = true;
-    private final Scanner scan = new Scanner(System.in);
+    private final Scanner scan;
     Field fld;
     Chest chest = new Chest();
     private int count = 0;
@@ -20,16 +20,16 @@ public class Logic {
             new CrossBow(), new Knight(), new Cuirassier(), new HorseBow());
     private ArrayList<Unit> userUnits = new ArrayList<>();
     float fine = 0;
-    public void setField(Field btl)
-    {
-        this.fld = btl;
-    }
-    public void start()
-    {
+    Logic(Scanner scan){
+        this.scan = scan;
         System.out.println("This town is going to be attacked!");
         System.out.println("You need to recruit some mercenaries!");
         System.out.println("Your budget is: " + budget);
         System.out.println("Here is the unit table");
+    }
+    public void setField(Field btl)
+    {
+        this.fld = btl;
     }
     @Override
     public String toString()
@@ -83,6 +83,7 @@ public class Logic {
             chooseEnemy(hiddenBot.getBotUnits());
             thisUnit.attack(enemy);
             if (enemy.getHp() <= 0) {
+                addWR(enemy);
                 fld.getMap().get(enemy.getX()).get(enemy.getY()).releaseUn();
                 hiddenBot.getBotUnits().remove(enemy);
                 enemy = null;
@@ -91,6 +92,24 @@ public class Logic {
         } else if(dec == 4 && chest.canBeOpen(thisUnit)){
             chest.openChest(thisUnit);
             fld.getMap().get(chest.getX()).get(chest.getY()).releaseUn();
+        }
+    }
+    private void addWR(Unit unit)
+    {
+        if(unit instanceof Horseman)
+        {
+            Town.wood += 2;
+            Town.rock += 1;
+        }
+        else if(unit instanceof Melee)
+        {
+            Town.wood += 1;
+            Town.rock += 1;
+        }
+        else if(unit instanceof Shooter)
+        {
+            Town.wood += 2;
+            Town.rock += 2;
         }
     }
     private void checkEnemy(Unit user, ArrayList <Unit> enemies)
@@ -247,15 +266,16 @@ public class Logic {
     boolean checkDir(int x, int y, Unit unit)
     {
         Cell nextCell = fld.getMap().get(unit.getX() + x).get(unit.getY() + y);
+        int n = unit.getFineNumber();
         if(x == 0 || y == 0)
         {
-            fine += unit.fine(nextCell.getTer());
+            fine += fld.fine(nextCell.getTer(), n);
         }
         else
         {
             Cell XCell = fld.getMap().get(unit.getX() + x - Integer.compare(x, 0)).get(unit.getY() + y);
             Cell YCell = fld.getMap().get(unit.getX() + x).get(unit.getY() + y - Integer.compare(y, 0));
-            fine += unit.fine(nextCell.getTer()) + Math.min(unit.fine(XCell.getTer()), unit.fine(YCell.getTer()));
+            fine += fld.fine(nextCell.getTer(), n) + Math.min(fld.fine(XCell.getTer(), n), fld.fine(YCell.getTer(), n));
         }
         if(nextCell.isPlain() && unit.getMovement() >= fine)
         {

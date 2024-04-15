@@ -42,7 +42,7 @@ public class Chest extends Unit {
                     unit.setDefaultMovement(unit.getDefaultMovement() + 2);
                 }
                 else {
-                    unit.setFines(Horseman.fineTree, Horseman.fineSwamp, Horseman.fineHill, Horseman.fineMountain);
+                    unit.setFineNumber(2);
                     unit.setDefaultMovement(unit.getDefaultMovement() + 5);
                     System.out.println(unit.getName() + " become a horseman!!!");
                 }
