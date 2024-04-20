@@ -26,8 +26,9 @@ public class Logic {
     Logic(Scanner scan, savedGame sGame){
         this.scan = scan;
         chest = new Chest();
-        shop = new Shop(sGame.getShop());
-        player = new Player(sGame.getPlayer());
+        shop = sGame.getShop();
+        player = sGame.getPlayer();
+        player.init();
     }
     public void start()
     {

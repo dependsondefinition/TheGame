@@ -12,9 +12,6 @@ public class Shop implements Serializable {
     Shop() {
         budget = 75;
     }
-    Shop(Shop sShop) {
-        budget = sShop.budget;
-    }
     public void buy(int num, Player user) {
         switch (num) {
             case 1: { user.addUnit(new Swordsman()); break;}

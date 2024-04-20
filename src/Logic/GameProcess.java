@@ -13,8 +13,8 @@ public class GameProcess {
     {
         logic = new Logic(scan);
         comp = new Bot();
-        town = new Town(logic.shop, logic.player);
-        town.start(town);
+        town = new Town(logic);
+        town.start(town, logic);
         System.out.println(town);
         System.out.println("Maps to load:");
         manager.showMaps();
@@ -25,8 +25,8 @@ public class GameProcess {
     {
         logic = new Logic(scan, sGame);
         comp = new Bot();
-        town = new Town(sGame.getTown(), logic.shop, logic.player);
-        town.start(town);
+        town = sGame.getTown();
+        town.start(town, logic);
         System.out.println(town);
         System.out.println("Maps to load:");
         manager.showMaps();

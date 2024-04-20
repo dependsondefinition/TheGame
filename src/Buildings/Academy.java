@@ -33,7 +33,7 @@ public class Academy extends Building implements Actions {
             System.out.println(i + 1 + ". " + expUnit.get(i));
         }
         int index = GameProcess.scan.nextInt() - 1;
-        System.out.println("Hire (H) | Delete (D)");
+        System.out.println("Hire (H) | Delete (D) | Create (C)");
         String ans = GameProcess.scan.next();
         if(ans.equals("H")) {
             if(shop.getBudget() > expUnit.get(index).getPrice()) {
@@ -44,6 +44,8 @@ public class Academy extends Building implements Actions {
             }
         } else if(ans.equals("D")) {
             expUnit.remove(expUnit.get(index));
+        } else if(ans.equals("C")) {
+            action();
         }
     }
 }

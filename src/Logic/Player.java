@@ -19,12 +19,9 @@ public class Player implements Serializable {
         moveUp = 0;
         fineUp = 0;
     }
-    Player(Player sPlayer) {
-        armorUp = sPlayer.armorUp;
-        attackUp = sPlayer.attackUp;
-        healthUp = sPlayer.healthUp;
-        moveUp = sPlayer.moveUp;
-        fineUp = sPlayer.fineUp;
+    public void init()
+    {
+        Units = new ArrayList<>();
     }
     public void addUnit(Unit unt)
     {
