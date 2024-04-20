@@ -1,12 +1,13 @@
 package Buildings;
 
-public class Building {
+import java.io.Serializable;
+
+public class Building implements Actions, Serializable {
     int level;
     int woodPr;
     int rockPr;
     String name;
-    Building(int lvl, int wood, int rock, String name)
-    {
+    Building(int lvl, int wood, int rock, String name) {
         this.level = lvl;
         this.woodPr = wood;
         this.rockPr = rock;
@@ -17,15 +18,26 @@ public class Building {
     {
         return String.format("Name: %7s, Wood: %d, Rock: %d", name, woodPr, rockPr);
     }
-    public void setLevel(int level) {
-        if (this.level > 0) {
-            this.level = level;
+
+    @Override
+    public void action() {
+
+    }
+
+    @Override
+    public void improvement() {
+        if(level > 0)
+        {
+            level++;
+            action();
         }
     }
-    public int getLevel() {
-        return level;
-    }
+
     public String getName() {
         return name;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

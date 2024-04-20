@@ -7,12 +7,48 @@ public class FileManager {
     private FileOutputStream save;
     private ObjectInputStream objLoad;
     private ObjectOutputStream objSave;
-    private final String dirPath = "d:/labs_java/maps/";
-    FileManager(){}
-    public Field LoadMap(String file)
-    {
+    private final String mapPath;
+    private final String gamePath;
+    FileManager() {
+        mapPath = "d:/labs_java/maps/";
+        gamePath = "d:/labs_java/games/";
+    }
+    public void SaveGame(String file, Player pl, Shop sp, Town tn) {
+        savedGame sGame = new savedGame(pl, sp, tn);
         try {
-            load = new FileInputStream(dirPath + file + ".ser");
+            save = new FileOutputStream(gamePath + file + ".ser");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            objSave = new ObjectOutputStream(save);
+            objSave.writeObject(sGame);
+            objSave.close();
+            save.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public savedGame LoadGame(String file) {
+        savedGame sg;
+        try {
+            load = new FileInputStream(gamePath + file + ".ser");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            objLoad = new ObjectInputStream(load);
+            sg = (savedGame) objLoad.readObject();
+            objLoad.close();
+            load.close();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return sg;
+    }
+    public Field LoadMap(String file) {
+        try {
+            load = new FileInputStream(mapPath + file + ".ser");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -26,10 +62,22 @@ public class FileManager {
             throw new RuntimeException(e);
         }
     }
-    public void showFiles()
-    {
-        File Map = new File(dirPath);
+    public void showMaps() {
+        File Map = new File(mapPath);
         File[] files = Map.listFiles();
+        if (files != null) {
+            for(File fl : files)
+            {
+                if(fl.isFile())
+                {
+                    System.out.println(fl.getName());
+                }
+            }
+        }
+    }
+    public void showGames() {
+        File Game = new File(gamePath);
+        File[] files = Game.listFiles();
         if (files != null) {
             for(File fl : files)
             {

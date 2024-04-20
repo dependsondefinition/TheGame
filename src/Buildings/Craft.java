@@ -1,12 +1,19 @@
 package Buildings;
 
-public class Craft extends Building{
+import Logic.Shop;
+
+public class Craft extends Building implements Actions{
     public static final int wood = 2;
     public static final int rock = 2;
-    public static int counter = 0;
-    public Craft()
+    private final Shop shop;
+    public Craft(Shop sp)
     {
         super(0, wood, rock, "Craft");
-        counter++;
+        shop = sp;
+    }
+    @Override
+    public void action()
+    {
+        shop.setBudget(shop.getBudget() + 10);
     }
 }

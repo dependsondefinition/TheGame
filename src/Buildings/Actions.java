@@ -1,5 +1,6 @@
 package Buildings;
 
 public interface Actions {
-    public void action();
+    void action();
+    void improvement();
 }

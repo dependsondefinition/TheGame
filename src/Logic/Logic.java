@@ -5,46 +5,44 @@ import Chest.Chest;
 
 import java.lang.Math;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Logic {
-    private int budget = 75;
     private boolean canSpawn = true;
     private final Scanner scan;
     Field fld;
-    Chest chest = new Chest();
+    Chest chest;
+    Shop shop;
+    Player player;
     private int count = 0;
     private Unit enemy;
-    private final List<Unit> unitTable = List.of(new Swordsman(), new Spearman(), new Axeman(), new LongBow(), new ShortBow(),
-            new CrossBow(), new Knight(), new Cuirassier(), new HorseBow());
-    private ArrayList<Unit> userUnits = new ArrayList<>();
     float fine = 0;
     Logic(Scanner scan){
         this.scan = scan;
+        chest = new Chest();
+        shop = new Shop();
+        player = new Player();
+    }
+    Logic(Scanner scan, savedGame sGame){
+        this.scan = scan;
+        chest = new Chest();
+        shop = new Shop(sGame.getShop());
+        player = new Player(sGame.getPlayer());
+    }
+    public void start()
+    {
         System.out.println("This town is going to be attacked!");
         System.out.println("You need to recruit some mercenaries!");
-        System.out.println("Your budget is: " + budget);
+        System.out.println("Your budget is: " + shop.getBudget());
         System.out.println("Here is the unit table");
     }
     public void setField(Field btl)
     {
         this.fld = btl;
     }
-    @Override
-    public String toString()
-    {
-        String table = "";
-        for(int i = 1; i < unitTable.size() + 1; i++)
-        {
-            table += i + ". " + unitTable.get(i - 1).toString() + "\n";
-        }
-        return table;
-    }
-    public void init()
-    {
-        System.out.println("Your budget is: " + budget);
-        if(budget >= unitTable.getFirst().getPrice())
+    public void init() {
+        System.out.println("Your budget is: " + shop.getBudget());
+        if(shop.affordable(0))
         {
             System.out.println("Type number of the unit, which you want to hire");
             System.out.println("If you dont want to buy units type 0");
@@ -55,14 +53,15 @@ public class Logic {
             canSpawn = false;
         }
     }
-    public void usrMove(Bot hiddenBot)
+    public void usrMove(Bot hiddenBot, Town twn)
     {
+        ArrayList<Unit> userUnits = player.getUnits();
         if (count >= userUnits.size()) {
             count = 0;
             toDefault(userUnits);
         }
         Unit thisUnit = userUnits.get(count);
-        checkEnemy(thisUnit, hiddenBot.getBotUnits());
+        checkEnemy(thisUnit, hiddenBot.getUnits());
         if(Math.random() > 0.5 && !chest.isOnField())
         {
             spawnChest();
@@ -76,16 +75,16 @@ public class Logic {
             System.out.println("Choose direction of the movement");
             chDir(thisUnit);
             thisUnit.setDir(scan.nextInt());
-            thisUnit.move(fld);
+            thisUnit.move(fld, player);
             setUnits(userUnits);
         } else if (dec == 2 && thisUnit.isSeeEn()) {
-            showEnemy(thisUnit, hiddenBot.getBotUnits());
-            chooseEnemy(hiddenBot.getBotUnits());
+            showEnemy(thisUnit, hiddenBot.getUnits());
+            chooseEnemy(hiddenBot.getUnits());
             thisUnit.attack(enemy);
             if (enemy.getHp() <= 0) {
-                addWR(enemy);
+                addWR(enemy, twn);
                 fld.getMap().get(enemy.getX()).get(enemy.getY()).releaseUn();
-                hiddenBot.getBotUnits().remove(enemy);
+                hiddenBot.getUnits().remove(enemy);
                 enemy = null;
             }
             count++;
@@ -94,22 +93,22 @@ public class Logic {
             fld.getMap().get(chest.getX()).get(chest.getY()).releaseUn();
         }
     }
-    private void addWR(Unit unit)
+    private void addWR(Unit unit, Town tn)
     {
         if(unit instanceof Horseman)
         {
-            Town.wood += 2;
-            Town.rock += 1;
+            tn.setWood(tn.getWood() + 2);
+            tn.setRock(tn.getRock() + 1);
         }
         else if(unit instanceof Melee)
         {
-            Town.wood += 1;
-            Town.rock += 1;
+            tn.setWood(tn.getWood() + 1);
+            tn.setRock(tn.getRock() + 1);
         }
         else if(unit instanceof Shooter)
         {
-            Town.wood += 2;
-            Town.rock += 2;
+            tn.setWood(tn.getWood() + 2);
+            tn.setRock(tn.getRock() + 2);
         }
     }
     private void checkEnemy(Unit user, ArrayList <Unit> enemies)
@@ -165,31 +164,19 @@ public class Logic {
         }
         else if(num == 10)
         {
-            if(userUnits.isEmpty()) {
-                userUnits.add(new SuperUnit(scan));
-                budget = 0;
+            if(player.getUnits().isEmpty()) {
+                shop.buy(num, player);
             }
             else {
                 canSpawn = false;
             }
         }
-        else if(budget >= unitTable.get(num - 1).getPrice())
+        else if(shop.affordable(num - 1))
         {
-            switch (num) {
-                case 1: { userUnits.add(new Swordsman()); break;}
-                case 2: { userUnits.add(new Spearman()); break;}
-                case 3: { userUnits.add(new Axeman()); break;}
-                case 4: { userUnits.add(new LongBow()); break;}
-                case 5: { userUnits.add(new ShortBow()); break;}
-                case 6: { userUnits.add(new CrossBow()); break;}
-                case 7: { userUnits.add(new Knight()); break;}
-                case 8: { userUnits.add(new Cuirassier()); break;}
-                case 9: { userUnits.add(new HorseBow()); break;}
-            }
-            Unit lastUnit = userUnits.getLast();
-            lastUnit.setCoord(0, userUnits.size() - 1);
+            shop.buy(num, player);
+            Unit lastUnit = player.getUnits().getLast();
+            lastUnit.setCoord(0, player.getUnits().size() - 1);
             lastUnit.setSign("\u001B[32m" + lastUnit.getSign() + "\u001B[0m");
-            budget = budget - lastUnit.getPrice();
         }
         else {
             System.out.println("You cant afford to hire this unit!");
@@ -202,7 +189,7 @@ public class Logic {
     }
     private void choice(int num)
     {
-        Unit unit = userUnits.get(num);
+        Unit unit = player.getUnits().get(num);
         System.out.println(unit);
         System.out.println("Choose action from list:");
         if(unit.getMovement() >= 1f)
@@ -269,13 +256,13 @@ public class Logic {
         int n = unit.getFineNumber();
         if(x == 0 || y == 0)
         {
-            fine += fld.fine(nextCell.getTer(), n);
+            fine += fld.fine(nextCell.getTer(), n) - player.getFineUp();
         }
         else
         {
             Cell XCell = fld.getMap().get(unit.getX() + x - Integer.compare(x, 0)).get(unit.getY() + y);
             Cell YCell = fld.getMap().get(unit.getX() + x).get(unit.getY() + y - Integer.compare(y, 0));
-            fine += fld.fine(nextCell.getTer(), n) + Math.min(fld.fine(XCell.getTer(), n), fld.fine(YCell.getTer(), n));
+            fine += fld.fine(nextCell.getTer(), n) + Math.min(fld.fine(XCell.getTer(), n), fld.fine(YCell.getTer(), n)) - 2 * player.getFineUp();
         }
         if(nextCell.isPlain() && unit.getMovement() >= fine)
         {
@@ -290,14 +277,13 @@ public class Logic {
         else { return checkDir(x + Integer.compare(x, 0), y + Integer.compare(y, 0), unit);}
 
     }
-    public ArrayList<Unit> retUs() {return this.userUnits;}
     public boolean isContSpawn() { return canSpawn;}
     public void setUnits(ArrayList<Unit> units)
     {
         for (Unit unit : units) {
             fld.getMap().get(unit.getX()).get(unit.getY()).setUn(unit);
             while (!fld.getMap().get(unit.getX()).get(unit.getY()).isOccupied()) {
-                unit.move(this.fld);
+                unit.move(this.fld, player);
                 fld.getMap().get(unit.getX()).get(unit.getY()).setUn(unit);
             }
         }

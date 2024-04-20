@@ -1,10 +1,12 @@
 package Units;
 
 import Logic.Field;
+import Logic.Player;
 
+import java.io.Serializable;
 import java.lang.Math;
 
-public class Unit {
+public class Unit implements Serializable {
     float evasion = 0;
     String name;
     int fineNumber = 0;
@@ -21,8 +23,7 @@ public class Unit {
     protected int xcord;
     protected int ycord;
     int dir = 0;
-    Unit(String n, String sgn, int health, int dam, int dist, int def, float move, int pr)
-    {
+    Unit(String n, String sgn, int health, int dam, int dist, int def, float move, int pr) {
         this.name = n;
         this.sign = sgn;
         this.hp = health;
@@ -34,17 +35,15 @@ public class Unit {
         this.defaultMovement = move;
         this.price = pr;
     }
-    protected Unit()
-    {
+    protected Unit() {
 
     }
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format("Name: %10s, Sign: %s, HP: %d, Damage: %d, Distance: %d, Defence: %d, Movement: %.1f, Price: %d",
                 name, sign, hp, damage, distance, defence, movement, price);
     }
-    public void move(Field fld)
+    public void move(Field fld, Player user)
     {
         float fine, fineDiag = 0;
         switch(dir) {
@@ -96,7 +95,7 @@ public class Unit {
             default: System.out.println("Wrong input"); break;
         }
         fine = fld.fine(fld.getMap().get(getX()).get(getY()).getTer(), fineNumber);
-        this.movement -= fine + fineDiag;
+        this.movement -= fine + fineDiag - user.getFineUp() * (fineDiag != 0 ? 2 : 1);
     }
     public void attack(Unit target)
     {
@@ -118,15 +117,13 @@ public class Unit {
     {
         return fineNumber;
     }
-    public void setFineNumber(int x)
-    {
+    public void setFineNumber(int x) {
         if(x >= 0 && x <= 2)
         {
             fineNumber = x;
         }
     }
-    public void setCoord(int x, int y)
-    {
+    public void setCoord(int x, int y) {
         this.xcord = x;
         this.ycord = y;
     }
@@ -147,6 +144,9 @@ public class Unit {
     public void setDefence(int def){
         this.defence = def;
     }
+    public void setDamage(int dam){
+        this.damage = dam;
+    }
 
     public void setEvasion(float evas)
     {
@@ -156,9 +156,11 @@ public class Unit {
     public void setDefaultMovement(float defaultMovement) {
         this.defaultMovement = defaultMovement;
     }
+    public void setDefaultHP(int hp){
+        this.defaultHP = hp;
+    }
 
-    public void seeEnemy(Unit enemy)
-    {
+    public void seeEnemy(Unit enemy) {
         seeEn = Math.hypot(enemy.getX() - this.getX(), (enemy.getY() - this.getY())) <= this.distance;
     }
     public boolean isSeeEn() {
@@ -174,6 +176,9 @@ public class Unit {
     public int getDir() { return this.dir; }
     public int getDefence(){
         return this.defence;
+    }
+    public int getDamage() {
+        return damage;
     }
     public float getEvasion() {
         return this.evasion;
