@@ -9,8 +9,7 @@ public class GameProcess {
     private final Field battle;
     public static final Scanner scan = new Scanner(System.in);
     public static final FileManager manager = new FileManager();
-    public GameProcess()
-    {
+    public GameProcess() {
         logic = new Logic(scan);
         comp = new Bot();
         town = new Town(logic);
@@ -21,8 +20,7 @@ public class GameProcess {
         battle = manager.LoadMap(scan.next());
         logic.setField(battle);
     }
-    public GameProcess(savedGame sGame)
-    {
+    public GameProcess(SavedGame sGame) {
         logic = new Logic(scan, sGame);
         comp = new Bot();
         town = sGame.getTown();
@@ -33,8 +31,7 @@ public class GameProcess {
         battle = manager.LoadMap(scan.next());
         logic.setField(battle);
     }
-    public void Process()
-    {
+    public void Process() {
         logic.start();
         System.out.println(logic.shop);
         System.out.println(battle);
@@ -51,7 +48,7 @@ public class GameProcess {
             comp.showUnits();
             logic.usrMove(comp, town);
             logic.setUnits(logic.player.getUnits());
-            if(!comp.getUnits().isEmpty())
+            if(!comp.getUnits().isEmpty() && !logic.player.getUnits().isEmpty())
             {
                 comp.botMove(logic, comp);
                 logic.setUnits(comp.getUnits());
@@ -61,6 +58,9 @@ public class GameProcess {
         if(logic.player.getUnits().isEmpty())
         {
             System.out.println("You LOSE!!!");
+            if(logic.shop.getBudget() == 0 && town.getBuildings().size() == 1 && town.getBank() != null) {
+                System.out.println("YOUR LOVELY BAUMAN'S GATE BANK");
+            }
         }
         else if(comp.getUnits().isEmpty())
         {

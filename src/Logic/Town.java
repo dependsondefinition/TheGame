@@ -15,12 +15,13 @@ public class Town implements Serializable {
     private int rock;
     private boolean[] isBuilt;
     Town(Logic lg) {
-        wood = 4;
-        rock = 2;
+        wood = 40;
+        rock = 20;
         craftCntr = 0;
-        isBuilt = new boolean[6];
+        isBuilt = new boolean[7];
         buildings = new ArrayList<>();
-        buildList = List.of(new Lab(lg.player), new Tavern(lg.player), new Forge(lg.player), new Arsenal(lg.player), new Academy(lg.shop, lg.player), new Market(lg.shop, Town.this), new Craft(lg.shop));
+        buildList = List.of(new Lab(lg.player), new Tavern(lg.player), new Forge(lg.player), new Arsenal(lg.player), new Academy(lg.shop, lg.player),
+                new Market(lg.shop, Town.this), new Bank(lg.shop, lg.player, Town.this), new Craft(lg.shop));
     }
     @Override
     public String toString(){
@@ -36,9 +37,9 @@ public class Town implements Serializable {
     public void listOfBuilds() {
         for(int i = 0; i < buildList.size(); i++)
         {
-            if(i < 6 && isBuilt[i] && buildList.get(i).getLevel() != 0) {
+            if(i < 7 && isBuilt[i] && buildList.get(i).getLevel() != 0) {
                 System.out.println(i + 1 + ". " + buildList.get(i).toString() +  " can be improved");
-            } else if(i == 6 && craftCntr < 4){
+            } else if(i == 7 && craftCntr < 4){
                 System.out.println(i + 1 + ". " + buildList.get(i).toString());
             }
             else{
@@ -48,6 +49,7 @@ public class Town implements Serializable {
     }
     public void start(Town tn, Logic lg)
     {
+        canBuilt = true;
         System.out.println("Choose a building to build or improve");
         listOfBuilds();
         while(wood > 1 && rock > 1 && canBuilt) {
@@ -131,6 +133,16 @@ public class Town implements Serializable {
                 break;
             }
             case 7: {
+                if (!isBuilt[input - 1] && calcBuild(Bank.wood, Bank.rock)) {
+                    buildings.add(new Bank(lg.shop, lg.player, tn));
+                    buildings.getLast().action();
+                    isBuilt[input - 1] = true;
+                } else {
+                    bld = buildings.get(search(buildList.get(input - 1)));
+                }
+                break;
+            }
+            case 8: {
                 if(craftCntr < 4 && calcBuild(Craft.wood, Craft.rock)) {
                     buildings.add(new Craft(lg.shop));
                     buildings.getLast().action();
@@ -176,5 +188,35 @@ public class Town implements Serializable {
     }
     public void setRock(int rock) {
         this.rock = rock;
+    }
+    public void NotBuilt(int index) {
+        isBuilt[index] = false;
+    }
+    public void setCraft()
+    {
+        craftCntr--;
+    }
+    public int indexOfBuild(Building bld) {
+        return switch (bld.getName()) {
+            case "Lab" -> 0;
+            case "Tavern" -> 1;
+            case "Forge" -> 2;
+            case "Arsenal" -> 3;
+            case "Academy" -> 4;
+            case "Market" -> 5;
+            case "Bank" -> 6;
+            default -> -1;
+        };
+    }
+    public Bank getBank() {
+        if(search(buildList.get(6)) != -1) {
+            return (Bank) buildings.get(search(buildList.get(6)));
+        }
+        else {
+            return null;
+        }
+    }
+    public ArrayList<Building> getBuildings() {
+        return buildings;
     }
 }

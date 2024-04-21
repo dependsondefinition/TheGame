@@ -2,12 +2,12 @@ package Logic;
 
 import java.io.Serializable;
 
-public class savedGame implements Serializable{
+public class SavedGame implements Serializable{
     private static final long serialVersionUID = 1L;
     private Player player;
     private Shop shop;
     private Town town;
-    public savedGame(Player pl, Shop sp, Town tn)
+    public SavedGame(Player pl, Shop sp, Town tn)
     {
         player = pl;
         shop = sp;

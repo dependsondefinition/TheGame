@@ -1,5 +1,6 @@
 package Logic;
 
+import Buildings.Bank;
 import Units.*;
 import Chest.Chest;
 
@@ -23,7 +24,7 @@ public class Logic {
         shop = new Shop();
         player = new Player();
     }
-    Logic(Scanner scan, savedGame sGame){
+    Logic(Scanner scan, SavedGame sGame){
         this.scan = scan;
         chest = new Chest();
         shop = sGame.getShop();
@@ -60,38 +61,45 @@ public class Logic {
         if (count >= userUnits.size()) {
             count = 0;
             toDefault(userUnits);
-        }
-        Unit thisUnit = userUnits.get(count);
-        checkEnemy(thisUnit, hiddenBot.getUnits());
-        if(Math.random() > 0.5 && !chest.isOnField())
-        {
-            spawnChest();
-        }
-        choice(count);
-        int dec = scan.nextInt();
-        if (dec == 3 || thisUnit.getMovement() < 1f && !thisUnit.isSeeEn()) {
-            count++;
-        } else if (dec == 1 && userUnits.get(count).getMovement() >= 1f) {
-            fld.getMap().get(thisUnit.getX()).get(thisUnit.getY()).releaseUn();
-            System.out.println("Choose direction of the movement");
-            chDir(thisUnit);
-            thisUnit.setDir(scan.nextInt());
-            thisUnit.move(fld, player);
-            setUnits(userUnits);
-        } else if (dec == 2 && thisUnit.isSeeEn()) {
-            showEnemy(thisUnit, hiddenBot.getUnits());
-            chooseEnemy(hiddenBot.getUnits());
-            thisUnit.attack(enemy);
-            if (enemy.getHp() <= 0) {
-                addWR(enemy, twn);
-                fld.getMap().get(enemy.getX()).get(enemy.getY()).releaseUn();
-                hiddenBot.getUnits().remove(enemy);
-                enemy = null;
+            if(twn.getBank() != null && !twn.getBank().getCredits().isEmpty()) {
+                twn.getBank().recount(fld);
             }
-            count++;
-        } else if(dec == 4 && chest.canBeOpen(thisUnit)){
-            chest.openChest(thisUnit);
-            fld.getMap().get(chest.getX()).get(chest.getY()).releaseUn();
+        }
+        if(!userUnits.isEmpty()) {
+            if(twn.getBank() != null) {
+                twn.getBank().spam();
+            }
+            Unit thisUnit = userUnits.get(count);
+            checkEnemy(thisUnit, hiddenBot.getUnits());
+            if (Math.random() > 0.5 && !chest.isOnField()) {
+                spawnChest();
+            }
+            choice(count);
+            int dec = scan.nextInt();
+            if (dec == 3 || thisUnit.getMovement() < 1f && !thisUnit.isSeeEn()) {
+                count++;
+            } else if (dec == 1 && userUnits.get(count).getMovement() >= 1f) {
+                fld.getMap().get(thisUnit.getX()).get(thisUnit.getY()).releaseUn();
+                System.out.println("Choose direction of the movement");
+                chDir(thisUnit);
+                thisUnit.setDir(scan.nextInt());
+                thisUnit.move(fld, player);
+                setUnits(userUnits);
+            } else if (dec == 2 && thisUnit.isSeeEn()) {
+                showEnemy(thisUnit, hiddenBot.getUnits());
+                chooseEnemy(hiddenBot.getUnits());
+                thisUnit.attack(enemy);
+                if (enemy.getHp() <= 0) {
+                    addWR(enemy, twn);
+                    fld.getMap().get(enemy.getX()).get(enemy.getY()).releaseUn();
+                    hiddenBot.getUnits().remove(enemy);
+                    enemy = null;
+                }
+                count++;
+            } else if (dec == 4 && chest.canBeOpen(thisUnit)) {
+                chest.openChest(thisUnit);
+                fld.getMap().get(chest.getX()).get(chest.getY()).releaseUn();
+            }
         }
     }
     private void addWR(Unit unit, Town tn)

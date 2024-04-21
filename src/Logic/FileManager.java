@@ -14,7 +14,7 @@ public class FileManager {
         gamePath = "d:/labs_java/games/";
     }
     public void SaveGame(String file, Player pl, Shop sp, Town tn) {
-        savedGame sGame = new savedGame(pl, sp, tn);
+        SavedGame sGame = new SavedGame(pl, sp, tn);
         try {
             save = new FileOutputStream(gamePath + file + ".ser");
         } catch (FileNotFoundException e) {
@@ -29,8 +29,8 @@ public class FileManager {
             throw new RuntimeException(e);
         }
     }
-    public savedGame LoadGame(String file) {
-        savedGame sg;
+    public SavedGame LoadGame(String file) {
+        SavedGame sg;
         try {
             load = new FileInputStream(gamePath + file + ".ser");
         } catch (FileNotFoundException e) {
@@ -38,7 +38,7 @@ public class FileManager {
         }
         try {
             objLoad = new ObjectInputStream(load);
-            sg = (savedGame) objLoad.readObject();
+            sg = (SavedGame) objLoad.readObject();
             objLoad.close();
             load.close();
         } catch (IOException | ClassNotFoundException e) {
@@ -54,7 +54,7 @@ public class FileManager {
         }
         try {
             objLoad = new ObjectInputStream(load);
-            savedField sField = (savedField) objLoad.readObject();
+            SavedField sField = (SavedField) objLoad.readObject();
             objLoad.close();
             load.close();
             return new Field(sField);
