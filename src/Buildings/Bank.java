@@ -137,8 +137,8 @@ public class Bank extends Building implements Actions{
                             if(bld instanceof Craft){
                                 town.setCraft();
                             } else {
+                                player.remUp(town.indexOfBuild(bld));
                                 town.NotBuilt(town.indexOfBuild(bld));
-                                //todo игрок должен лишаться тех улучшений, которые ему дают здания, отобранные банком
                             }
                             town.getBuildings().remove(bld);
                         } else if(!town.getBank().equals(town.getBuildings().getFirst())) {
@@ -146,6 +146,7 @@ public class Bank extends Building implements Actions{
                             if(bld instanceof Craft){
                                 town.setCraft();
                             } else {
+                                player.remUp(town.indexOfBuild(bld));
                                 town.NotBuilt(town.indexOfBuild(bld));
                             }
                             town.getBuildings().remove(bld);
