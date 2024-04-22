@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class savedField implements Serializable {
+public class SavedField implements Serializable {
     private static final long serialVersionUID = 1L;
     private final int xsize;
     private final int ysize;
     private final HashMap<String, float[]> Fines;
     private final ArrayList<String> ter;
     private final ArrayList<ArrayList<Cell>> Map;
-    public savedField(int xsize, int ysize, ArrayList<ArrayList<Cell>> Map, HashMap<String, float[]> Fines, ArrayList<String> ter) {
+    public SavedField(int xsize, int ysize, ArrayList<ArrayList<Cell>> Map, HashMap<String, float[]> Fines, ArrayList<String> ter) {
         this.xsize = xsize;
         this.ysize = ysize;
         this.Map = Map;

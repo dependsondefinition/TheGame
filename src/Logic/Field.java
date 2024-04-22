@@ -9,7 +9,7 @@ public class Field {
     private HashMap<String, float[]> Fines;
     private ArrayList<String> ter;
     private ArrayList<ArrayList<Cell>> Map;
-    public Field (savedField sField)
+    public Field (SavedField sField)
     {
         this.xsize = sField.getXsize();
         this.ysize = sField.getYsize();

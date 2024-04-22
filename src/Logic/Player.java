@@ -23,6 +23,30 @@ public class Player implements Serializable {
     {
         Units = new ArrayList<>();
     }
+    public void remUp(int num) {
+        switch (num) {
+            case 0: { //Lab
+                healthUp = 0;
+                break;
+            }
+            case 1: { //Tavern
+                moveUp = 0;
+                fineUp = 0;
+                break;
+            }
+            case 2: {  //Forge
+                armorUp = 0;
+                break;
+            }
+            case 3: { //Arsenal
+                attackUp = 0;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
     public void addUnit(Unit unt)
     {
         Units.add(unt);
