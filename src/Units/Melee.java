@@ -5,6 +5,5 @@ public class Melee extends Unit {
     {
         super(nam, n, health, dam, dist, def, move, pr);
         this.distance = 1;
-        setFines(1.2f, 1.5f, 2f, 2.5f);
     }
 }

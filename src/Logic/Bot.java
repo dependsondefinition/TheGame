@@ -4,64 +4,58 @@ import Units.*;
 
 import java.util.ArrayList;
 
-public class Bot {
-    private ArrayList<Unit> botUnits = new ArrayList<>();
+public class Bot extends Player {
     private Unit target;
-    private int botCount = 0;
-    public void addNew(Logic hiddenLogic){
+    private int botCount;
+    Bot()
+    {
+        super();
+        botCount = 0;
+    }
+    public void addNew(Logic hiddenLogic, Bot bot){
         int rand = 0;
-        if(botUnits.isEmpty())
+        if(Units.isEmpty())
         {
             rand = (int) (Math.random() * 8) + 1;
         }
-        else if(botUnits.getLast() instanceof Melee)
+        else if(Units.getLast() instanceof Melee)
         {
             rand = (int) (Math.random() * 5) + 4;
         }
-        else if(botUnits.getLast() instanceof Horseman)
+        else if(Units.getLast() instanceof Horseman)
         {
             rand = (int) (Math.random() * 5) + 1;
         }
-        else if(botUnits.getLast() instanceof Shooter)
+        else if(Units.getLast() instanceof Shooter)
         {
             rand = (int) (Math.random() * 2) + (int) Math.round(Math.random()) * 6 + 1;
         }
-        switch (rand) {
-            case 1: { botUnits.add(new Swordsman()); break;}
-            case 2: { botUnits.add(new Spearman()); break;}
-            case 3: { botUnits.add(new Axeman()); break;}
-            case 4: { botUnits.add(new LongBow()); break;}
-            case 5: { botUnits.add(new ShortBow()); break;}
-            case 6: { botUnits.add(new CrossBow()); break;}
-            case 7: { botUnits.add(new Knight()); break;}
-            case 8: { botUnits.add(new Cuirassier()); break;}
-            case 9: { botUnits.add(new HorseBow()); break;}
-        }
-        Unit lastUnit = botUnits.getLast();
-        lastUnit.setCoord(hiddenLogic.fld.getXsize() - 1, hiddenLogic.fld.getYsize() - botUnits.size());
+        hiddenLogic.shop.buy(rand, bot);
+        Unit lastUnit = Units.getLast();
+        lastUnit.setCoord(hiddenLogic.fld.getXsize() - 1, hiddenLogic.fld.getYsize() - Units.size());
         lastUnit.setSign("\u001B[31m" + lastUnit.getSign() + "\u001B[0m");
     }
     public void showUnits()
     {
         System.out.println("Your enemies:");
-        for (Unit botUnit : botUnits) {
+        for (Unit botUnit : Units) {
             System.out.println(botUnit);
         }
         System.out.println();
     }
-    public void botMove(Logic hiddenLogic)
+    public void botMove(Logic hiddenLogic, Bot bot)
     {
-        if (botCount >= botUnits.size()) {
+        if (botCount >= Units.size()) {
             botCount = 0;
-            hiddenLogic.toDefault(botUnits);
+            hiddenLogic.toDefault(Units);
         }
-        Unit thisBot = botUnits.get(botCount);
+        Unit thisBot = Units.get(botCount);
         if(hiddenLogic.chest.isOnField() && !hiddenLogic.chest.isOpen())
         {
             target = hiddenLogic.chest;
         }
         else {
-            target = setTarget(thisBot, hiddenLogic.retUs());
+            target = setTarget(thisBot, hiddenLogic.player.getUnits());
             thisBot.seeEnemy(target);
         }
         if(hiddenLogic.chest.canBeOpen(thisBot))
@@ -76,7 +70,7 @@ public class Bot {
             System.out.println(target.getName() + "'s HP: " + target.getHp());
             if (target.getHp() <= 0) {
                 hiddenLogic.fld.getMap().get(target.getX()).get(target.getY()).releaseUn();
-                hiddenLogic.retUs().remove(target);
+                hiddenLogic.player.getUnits().remove(target);
                 target = null;
             }
             botCount++;
@@ -86,7 +80,7 @@ public class Bot {
             if(thisBot.getDir() != 0)
             {
                 hiddenLogic.fld.getMap().get(thisBot.getX()).get(thisBot.getY()).releaseUn();
-                thisBot.move(hiddenLogic.fld);
+                thisBot.move(hiddenLogic.fld, bot);
                 if(thisBot.getMovement() < 1f)
                 {
                     botCount++;
@@ -293,5 +287,4 @@ public class Bot {
         }
         return target;
     }
-    public ArrayList<Unit> getBotUnits() { return botUnits;}
 }
