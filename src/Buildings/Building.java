@@ -3,6 +3,7 @@ package Buildings;
 import java.io.Serializable;
 
 public class Building implements Actions, Serializable {
+    private static final long serialVersionUID = 1L;
     int level;
     int woodPr;
     int rockPr;

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.lang.Math;
 
 public class Unit implements Serializable {
+    private static final long serialVersionUID = 1L;
     float evasion = 0;
     String name;
     int fineNumber = 0;
@@ -23,7 +24,7 @@ public class Unit implements Serializable {
     protected int xcord;
     protected int ycord;
     int dir = 0;
-    Unit(String n, String sgn, int health, int dam, int dist, int def, float move, int pr) {
+    public Unit(String n, String sgn, int health, int dam, int dist, int def, float move, int pr) {
         this.name = n;
         this.sign = sgn;
         this.hp = health;

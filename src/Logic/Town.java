@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Town implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final ArrayList<Building> buildings;
     private final List<Building> buildList;
-    private boolean canBuilt = true;
+    private boolean canBuilt;
     private int craftCntr;
     private int wood;
     private int rock;
@@ -57,7 +58,7 @@ public class Town implements Serializable {
             addBuilding(GameProcess.scan.nextInt(), tn, lg);
         }
     }
-    private void addBuilding(int input, Town tn, Logic lg) {
+    void addBuilding(int input, Town tn, Logic lg) {
         Building bld = null;
         switch(input){
             case 0: {

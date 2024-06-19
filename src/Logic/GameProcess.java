@@ -6,24 +6,20 @@ public class GameProcess {
     private final Town town;
     private final Logic logic;
     private final Bot comp;
-    private final Field battle;
+    private Field battle;
     public static final Scanner scan = new Scanner(System.in);
     public static final FileManager manager = new FileManager();
     public GameProcess() {
         logic = new Logic(scan);
         comp = new Bot();
         town = new Town(logic);
-        town.start(town, logic);
-        System.out.println(town);
-        System.out.println("Maps to load:");
-        manager.showMaps();
-        battle = manager.LoadMap(scan.next());
-        logic.setField(battle);
     }
     public GameProcess(SavedGame sGame) {
         logic = new Logic(scan, sGame);
         comp = new Bot();
         town = sGame.getTown();
+    }
+    public void start() {
         town.start(town, logic);
         System.out.println(town);
         System.out.println("Maps to load:");
@@ -31,7 +27,7 @@ public class GameProcess {
         battle = manager.LoadMap(scan.next());
         logic.setField(battle);
     }
-    public void Process() {
+    public void process() {
         logic.start();
         System.out.println(logic.shop);
         System.out.println(battle);
@@ -55,6 +51,8 @@ public class GameProcess {
             }
             System.out.println(battle);
         }
+    }
+    public void end() {
         if(logic.player.getUnits().isEmpty())
         {
             System.out.println("You LOSE!!!");

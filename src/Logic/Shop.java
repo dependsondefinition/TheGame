@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Shop implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int budget;
     private final List<Unit> unitTable = List.of(new Swordsman(), new Spearman(), new Axeman(), new LongBow(), new ShortBow(),
                 new CrossBow(), new Knight(), new Cuirassier(), new HorseBow());;

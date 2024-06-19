@@ -6,6 +6,8 @@ import Units.Unit;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Bank extends Building implements Actions{
     public static final int wood = 0;
@@ -15,6 +17,7 @@ public class Bank extends Building implements Actions{
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
     private ArrayList<Credit> credits = new ArrayList<>();
+    private final Logger log = Logger.getLogger("MyLogger");
     private List<Credit> offers = List.of(new Credit(10, 10, 5),
             new Credit(50, 5, 10), new Credit(1000, 2, 15));
     private Shop shop;
@@ -74,16 +77,19 @@ public class Bank extends Building implements Actions{
             case 1: {
                 credits.add(new Credit(10, 10, 5));
                 shop.setBudget((int) (shop.getBudget() + credits.getLast().getMoney()));
+                log.log(Level.INFO, "You added credit " + credits.getLast());
                 break;
             }
             case 2: {
                 credits.add(new Credit(50, 5, 10));
                 shop.setBudget((int) (shop.getBudget() + credits.getLast().getMoney()));
+                log.log(Level.INFO, "You added credit " + credits.getLast());
                 break;
             }
             case 3: {
                 credits.add(new Credit(1000, 2, 15));
                 shop.setBudget((int) (shop.getBudget() + credits.getLast().getMoney()));
+                log.log(Level.INFO, "You added credit " + credits.getLast());
                 break;
             }
             default: {
@@ -118,6 +124,7 @@ public class Bank extends Building implements Actions{
                 if(curCred.getPeriod() == 2) {
                     System.out.println(ANSI_RED_BACKGROUND + "IF YOU DON'T PAY YOUR CREDIT IN 2 DAYS WE WILL CONFISCATE YOUR PROPERTY!!!"
                             + ANSI_RESET + "\n YOUR LOVELY BAUMAN'S GATE BANK");
+                    log.log(Level.WARNING, "You have 2 days until credit period will end");
                     System.out.println(curCred.getMoney());
                 }
             } else {
@@ -128,6 +135,7 @@ public class Bank extends Building implements Actions{
                     } else {
                         shop.setBudget((int) (shop.getBudget() - curCred.getMoney()));
                         System.out.println(curCred + " is payed!!! DO YOU WANT TO TAKE OUT NEW CREDIT?");
+                        log.log(Level.INFO, "You payed credit " + curCred);
                         credits.remove(curCred);
                     }
                 } else {
@@ -140,6 +148,8 @@ public class Bank extends Building implements Actions{
                                 player.remUp(town.indexOfBuild(bld));
                                 town.NotBuilt(town.indexOfBuild(bld));
                             }
+                            System.out.println("We took your " + bld.getName() + "\n YOUR LOVELY BAUMAN'S GATE BANK");
+                            log.log(Level.SEVERE, "You lost " + bld.getName());
                             town.getBuildings().remove(bld);
                         } else if(!town.getBank().equals(town.getBuildings().getFirst())) {
                             Building bld = town.getBuildings().getFirst();
@@ -149,10 +159,30 @@ public class Bank extends Building implements Actions{
                                 player.remUp(town.indexOfBuild(bld));
                                 town.NotBuilt(town.indexOfBuild(bld));
                             }
+                            System.out.println("We took your " + bld.getName() + "\n YOUR LOVELY BAUMAN'S GATE BANK");
+                            log.log(Level.SEVERE, "You lost " + bld.getName());
                             town.getBuildings().remove(bld);
+                        }
+                        if(curCred.getMoney() > 30) {
+                            curCred.setMoney(curCred.getMoney() - 30);
+                        }
+                        else {
+                            System.out.println(curCred + " is payed!!! DO YOU WANT TO TAKE OUT NEW CREDIT?");
+                            log.log(Level.INFO, "You payed credit " + curCred);
+                            credits.remove(curCred);
                         }
                     } else if(!player.getUnits().isEmpty()) {
                         Unit del = player.getUnits().getLast();
+                        System.out.println("We took your " + del.getName() + "\n YOUR LOVELY BAUMAN'S GATE BANK");
+                        log.log(Level.SEVERE, "You lost " + del.getName());
+                        if(curCred.getMoney() > del.getPrice()) {
+                            curCred.setMoney(curCred.getMoney() - del.getPrice());
+                        }
+                        else {
+                            System.out.println(curCred + " is payed!!! DO YOU WANT TO TAKE OUT NEW CREDIT?");
+                            log.log(Level.INFO, "You payed credit " + curCred);
+                            credits.remove(curCred);
+                        }
                         player.getUnits().remove(player.getUnits().getLast());
                         fld.getMap().get(del.getX()).get(del.getY()).releaseUn();
                     }
@@ -162,18 +192,21 @@ public class Bank extends Building implements Actions{
     }
     public void spam() {
         float spamProb = (float) Math.random();
-        if(spamProb > 0.555) {
+        if(spamProb > 0.8) {
             if(shop.getBudget() > 100) {
                 System.out.println(ANSI_RED_BACKGROUND + "SPECIAL OFFER FOR YOU!!!!!!!!!!"
                         + ANSI_RESET + " CREDIT OF 50000 AT 1000 PERCENT PER MOVE FOR A 10 MOVES");
+                log.log(Level.WARNING, "Spam message for budget more than 100");
             }
             else if(shop.getBudget() > 50) {
                 System.out.println(ANSI_BLUE_BACKGROUND + "IF YOU CALL TO US RIGHT NOW YOU WILL GET MORTGAGE FOR ALL YOUR LIFE!!!!"
                         + ANSI_RESET + "\n YOUR LOVELY BAUMAN'S GATE BANK");
+                log.log(Level.WARNING, "Spam message for budget more than 50");
             }
             else if(shop.getBudget() > 10) {
                 System.out.println(ANSI_GREEN_BACKGROUND + "WE ARE SURE THAT YOU NEED CREDIT FROM BAUMAN'S GATE BANK!!!"
                         + ANSI_RESET + " WE CAN OFFER YOU SOOOO MANY CREDITS!!! JUST CONTACT WITH US!!!");
+                log.log(Level.WARNING, "Spam message for budget more than 10");
             }
         }
     }

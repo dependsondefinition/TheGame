@@ -215,7 +215,7 @@ public class Logic {
             System.out.println("4. Get upgrade");
         }
     }
-    private void chDir(Unit un)
+    void chDir(Unit un)
     {
         boolean upFree = false, rightFree = false, downFree = false, leftFree = false;
         if(un.getX() > 0) {

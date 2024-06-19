@@ -13,6 +13,8 @@ public class Menu {
             System.out.println("Enter the file name");
             game = new GameProcess(GameProcess.manager.LoadGame(GameProcess.scan.next()));
         }
-        game.Process();
+        game.start();
+        game.process();
+        game.end();
     }
 }
